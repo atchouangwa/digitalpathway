@@ -1,0 +1,9 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { services } from '@/lib/content';
+import { CTA } from '@/components/shared';
+import { Arrow } from '@/components/interactive';
+export function generateStaticParams(){return services.map(s=>({slug:s.slug}));}
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const {slug}=await params;const s=services.find(s=>s.slug===slug);return {title:s?.name,description:s?.intro,alternates:{canonical:`/services/${slug}`}};}
+export default async function Service({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const s=services.find(s=>s.slug===slug);if(!s)notFound();return <><section className="page-hero container"><Link className="back-link" href="/services">All services</Link><p className="eyebrow">{s.name}</p><h1 className="display detail-display">{s.line}</h1><p>{s.intro}</p><Link className="button" href="/contact">Start a project<Arrow/></Link></section><section className="detail-section container"><div><h2>Built around<br />your next customer.</h2><p>{s.outcome}</p><p>For real estate businesses and home service companies, the strongest starting point is a clear offer, a clear audience, and a clear next step.</p></div><div className="deliverables"><h3>What we can help with</h3>{s.items.map(item=><p key={item}><Arrow size={20}/>{item}</p>)}</div></section><section className="container single-faq"><details className="faq" open><summary>{s.question}<span aria-hidden="true">+</span></summary><p>{s.answer}</p></details></section><section className="container related-services"><h2>Make the rest work harder.</h2><div>{services.filter(v=>v.slug!==slug).map(v=><Link href={`/services/${v.slug}`} key={v.slug}>{v.short||v.name}<Arrow/></Link>)}</div></section><CTA/></>;}
