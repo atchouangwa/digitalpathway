@@ -1,4 +1,6 @@
-import type { Metadata } from 'next';
-import { ServiceRows, CTA } from '@/components/shared';
-export const metadata:Metadata={title:'Marketing Services',description:'Web design, SEO, Meta Ads, and Google Ads for real estate and home service businesses.',alternates:{canonical:'/services'}};
-export default function Services(){return <><section className="page-hero container"><p className="eyebrow">What we do</p><h1 className="display">Built to connect.<br />Built to convert.</h1><p>Four core services. One clear path from getting noticed to starting a conversation.</p></section><section className="container section"><ServiceRows/></section><CTA title="Find your starting point."/></>;}
+import {PageHero,SectionHeader,ServiceRows,IndustryPanels,Process,FAQSection,CTA} from '@/components/shared';
+import {CustomerJourney} from '@/components/interactive';
+import {faq} from '@/lib/content';
+import {pageMetadata} from '@/lib/site';
+export const metadata=pageMetadata('Marketing Services','Connected web design, SEO, Google Ads, and Meta Ads for real estate and home service businesses.','/services');
+export default function Services(){return <><PageHero label="Our services" title={'FOUR DISCIPLINES.\nONE CLEAR DIRECTION.'} text="Your customer does not experience marketing in separate channels. Your website, search presence, and advertising should work together." breadcrumb={[{name:'Services',href:'/services'}]}/><section className="section container"><SectionHeader label="The capabilities" title={'START WHERE IT MATTERS.\nCONNECT WHAT COMES NEXT.'}/><ServiceRows/></section><section className="section contrast-section"><div className="container"><SectionHeader label="The system" title={'FROM THE FIRST SEARCH\nTO THE FIRST CONVERSATION.'}/><CustomerJourney/></div></section><section className="section dark"><div className="container"><SectionHeader label="The markets" title={'BUILT FOR YOUR\nCUSTOMER’S DECISION.'}/><IndustryPanels/></div></section><Process/><FAQSection items={[faq[1],faq[6],faq[7],faq[8]]}/><CTA/></>;}
