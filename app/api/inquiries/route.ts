@@ -9,7 +9,10 @@ const limits=new Map<string,{count:number;until:number}>();
 const reply=(body:unknown,status:number)=>NextResponse.json(body,{status,headers:{'Cache-Control':'no-store'}});
 export async function POST(request:Request){
  const origin=request.headers.get('origin');
- if(!origin||origin!==new URL(request.url).origin)return reply({error:'This request could not be verified. Refresh the page and try again.'},403);
+ const internalUrl=new URL(request.url);
+ const publicHost=request.headers.get('host')||internalUrl.host;
+ const protocol=request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim()||internalUrl.protocol.slice(0,-1);
+ if(!origin||origin!==protocol+'://'+publicHost)return reply({error:'This request could not be verified. Refresh the page and try again.'},403);
  if(!request.headers.get('content-type')?.includes('application/json'))return reply({error:'Please submit the project form.'},415);
  const now=Date.now();const ip=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';
  const key=createHash('sha256').update(ip).digest('hex');const prior=limits.get(key);
