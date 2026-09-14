@@ -18,9 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: npm install
-      - name: Emit resolved dependency lock
-        run: node -e "console.log('LOCK_START'+require('fs').readFileSync('package-lock.json','utf8')+'LOCK_END')"
+      - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npm test
