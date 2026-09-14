@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
-import { WorkGrid, CTA } from '@/components/shared';
-export const metadata:Metadata={title:'Our Work',description:'Explore website projects for Dana Williams, Henry Clay Co., and Onu Ventures.',alternates:{canonical:'/work'}};
-export default function Work(){return <><section className="page-hero container"><p className="eyebrow">Our work</p><h1 className="display">A better presence.<br />A stronger impression.</h1><p>Explore a selection of websites we’ve built for businesses in property and the spaces around it.</p></section><section className="container work-page"><WorkGrid full/></section><CTA title="Let’s build what’s next."/></>;}
+import {PageHero,PrimaryButton,WorkGrid,CTA} from '@/components/shared';
+import {pageMetadata} from '@/lib/site';
+export const metadata=pageMetadata('Our Work','Explore Digital Pathway website projects for Dana Williams, Henry Clay Co., and Onu Ventures.','/work');
+export default function Work(){return <><PageHero label="Selected work" title={'THE FIRST IMPRESSION.\nMADE TO COUNT.'} text="A closer look at the websites we have helped bring to life. Real businesses. Actual work." breadcrumb={[{name:'Our Work',href:'/work'}]}><PrimaryButton href="#projects" secondary>Explore the projects</PrimaryButton></PageHero><section id="projects" className="section container portfolio-section"><WorkGrid full/></section><CTA title={'YOUR BUSINESS.\nOUR NEXT CONVERSATION.'}/></>;}
