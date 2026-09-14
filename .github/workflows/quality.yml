@@ -1,0 +1,35 @@
+name: Website quality
+on:
+  push:
+    branches: [main, redesign/monochrome]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: website-quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install
+      - name: Emit resolved dependency lock
+        run: node -e "console.log('LOCK_START'+require('fs').readFileSync('package-lock.json','utf8')+'LOCK_END')"
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: website-quality
+          path: |
+            playwright-report/
+            test-results/
+            package-lock.json
+          retention-days: 7
