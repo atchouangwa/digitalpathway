@@ -9,7 +9,7 @@ const marketLinks=[['Real Estate','/industries/real-estate'],['Home Services','/
 export function Arrow({size=22}:{size?:number}){return <svg className="arrow" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg>;}
 
 export function MobileMenu({dialogRef,onClose}:{dialogRef:React.RefObject<HTMLDialogElement|null>;onClose:()=>void}){
- return <dialog ref={dialogRef} className="mobile-menu" onClose={onClose} aria-label="Main navigation">
+ return <dialog ref={dialogRef} className="mobile-menu" onClose={onClose} onKeyDown={e=>{if(e.key!=='Tab')return;const nodes=Array.from(e.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),[tabindex="0"]'));const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}} aria-label="Main navigation">
  <div className="mobile-menu-head"><Link href="/" className="wordmark" onClick={()=>dialogRef.current?.close()}>digital pathway<span aria-hidden="true">↗</span></Link><button className="menu-button" onClick={()=>dialogRef.current?.close()} aria-label="Close navigation">Close <span aria-hidden="true">×</span></button></div>
  <nav aria-label="Mobile navigation" onClick={e=>{if((e.target as Element).closest('a'))dialogRef.current?.close();}}>
  <div className="mobile-group"><Link href="/services">Services <Arrow/></Link><div>{serviceLinks.map(([n,h])=><Link key={h} href={h}>{n}</Link>)}</div></div>
