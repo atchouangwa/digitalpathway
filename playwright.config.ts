@@ -4,5 +4,5 @@ export default defineConfig({
  fullyParallel:false,workers:2,retries:0,
  reporter:[['list'],['html',{open:'never'}]],
  use:{baseURL:'http://127.0.0.1:3000',trace:'retain-on-failure',screenshot:'only-on-failure'},
- webServer:{command:'npm run start',url:'http://127.0.0.1:3000',reuseExistingServer:!process.env.CI,timeout:120000}
+ webServer:[{command:'npm run start',url:'http://127.0.0.1:3000',reuseExistingServer:!process.env.CI,timeout:120000},{command:'npm run start -- --port 3001',url:'http://127.0.0.1:3001',reuseExistingServer:!process.env.CI,timeout:120000,env:{PROJECT_WEBHOOK_URL:'https://example.invalid/ci-only'}}]
 });
