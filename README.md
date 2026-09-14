@@ -3,7 +3,7 @@
 Monochrome agency website in the existing Next.js App Router / TypeScript project. Original URLs, service scope, portfolio relationships, and public contact inbox are preserved.
 
 ## Run
-Node 24. Use npm install, npm run dev, npm run build, npm run typecheck, and npm test. Tailwind uses its PostCSS plugin. The design is a bespoke CSS component system with Tailwind utilities available. Geist is optimized and self-hosted by next/font at build time. No animation runtime is shipped.
+Node 24. Use npm ci, npm run dev, npm run build, npm run typecheck, and npm test. Tailwind uses its PostCSS plugin. The design is a bespoke CSS component system with Tailwind utilities available. Geist is optimized and self-hosted by next/font at build time. No animation runtime is shipped.
 
 ## Pages and components
 All original URLs remain: /, /services, /services/web-design, /services/seo, /services/google-ads, /services/meta-ads, /industries, /industries/real-estate, /industries/home-services, /info-products, /work, /about, /contact.
