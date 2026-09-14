@@ -1,6 +1,7 @@
 import {NextResponse} from 'next/server';
 import {createHash,randomUUID} from 'node:crypto';
-import {validateInquiry,inquiryText} from '@/lib/inquiry';
+import {validateInquiry} from '@/lib/inquiry';
+import {deliverInquiry} from '@/lib/delivery';
 import {contactEmail} from '@/lib/site';
 export const runtime='nodejs';
 export const maxDuration=30;
@@ -29,15 +30,7 @@ export async function POST(request:Request){
  if(!webhook&&!(resendKey&&from))return reply({error:'Online inquiries are temporarily unavailable. Please email '+contactEmail+'. Your details have not been sent.'},503);
  const supplied=request.headers.get('x-idempotency-key');const requestId=supplied&&/^[a-f0-9-]{36}$/i.test(supplied)?supplied:randomUUID();
  try{
-  let response:Response;
-  if(webhook){
-   const url=new URL(webhook);if(url.protocol!=='https:')throw new Error('Webhook must use HTTPS');
-   response=await fetch(url,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json','Idempotency-Key':requestId,...(process.env.PROJECT_WEBHOOK_TOKEN?{Authorization:'Bearer '+process.env.PROJECT_WEBHOOK_TOKEN}:{})},body:JSON.stringify({event:'project_inquiry',requestId,submittedAt:new Date().toISOString(),source:'digitalpathway',...result.data}),signal:AbortSignal.timeout(12000)});
-  }else{
-   response=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:'Bearer '+resendKey,'Content-Type':'application/json','Idempotency-Key':requestId},body:JSON.stringify({from,to:[process.env.INQUIRY_TO_EMAIL||contactEmail],reply_to:result.data.email,subject:'Project inquiry: '+result.data.company.replace(/[\r\n]/g,' '),text:inquiryText(result.data)}),signal:AbortSignal.timeout(12000)});
-  }
-  if(!response.ok)throw new Error('Delivery provider rejected request');
-  if(!webhook){const body=await response.json();if(typeof body.id!=='string')throw new Error('Missing provider acknowledgment');}
+  await deliverInquiry(result.data,requestId,{webhook,webhookToken:process.env.PROJECT_WEBHOOK_TOKEN,resendKey,from,to:process.env.INQUIRY_TO_EMAIL||contactEmail});
   return reply({ok:true,requestId},200);
  }catch{
   // Do not log payloads, provider URLs, API credentials, or personal information.
