@@ -1,60 +1,69 @@
 'use client';
-
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {useEffect,useRef,useState} from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { motion, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, List, X, Moon, Sun, Copy, Check, EnvelopeSimple } from '@phosphor-icons/react';
+import {usePathname} from 'next/navigation';
+import {track, type EventName} from '@/lib/tracking';
 
-export function Arrow({ size = 21 }: { size?: number }) { return <ArrowUpRight size={size} weight="regular" aria-hidden="true" />; }
+const serviceLinks=[['Web Design','/services/web-design'],['SEO','/services/seo'],['Google Ads','/services/google-ads'],['Meta Ads','/services/meta-ads']];
+const marketLinks=[['Real Estate','/industries/real-estate'],['Home Services','/industries/home-services']];
+export function Arrow({size=22}:{size?:number}){return <svg className="arrow" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg>;}
 
-export function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  const reduce = useReducedMotion();
-  return <motion.div className={className} initial={false} whileInView={reduce ? {} : { transform: ['translateY(18px)', 'translateY(0px)'] }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}>{children}</motion.div>;
+export function MobileMenu({dialogRef,onClose}:{dialogRef:React.RefObject<HTMLDialogElement|null>;onClose:()=>void}){
+ return <dialog ref={dialogRef} className="mobile-menu" onClose={onClose} onKeyDown={e=>{if(e.key!=='Tab')return;const nodes=Array.from(e.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),[tabindex="0"]'));const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}} aria-label="Main navigation">
+ <div className="mobile-menu-head"><Link href="/" className="wordmark" onClick={()=>dialogRef.current?.close()}>digital pathway<span aria-hidden="true">↗</span></Link><button className="menu-button" onClick={()=>dialogRef.current?.close()} aria-label="Close navigation">Close <span aria-hidden="true">×</span></button></div>
+ <nav aria-label="Mobile navigation" onClick={e=>{if((e.target as Element).closest('a'))dialogRef.current?.close();}}>
+ <div className="mobile-group"><Link href="/services">Services <Arrow/></Link><div>{serviceLinks.map(([n,h])=><Link key={h} href={h}>{n}</Link>)}</div></div>
+ <div className="mobile-group"><Link href="/industries">Who We Help <Arrow/></Link><div>{marketLinks.map(([n,h])=><Link key={h} href={h}>{n}</Link>)}</div></div>
+ {[['Our Work','/work'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link className="mobile-main-link" key={h} href={h}>{n}<Arrow/></Link>)}
+ <Link className="button" href="/contact">Start a Project<Arrow/></Link>
+ </nav><p className="eyebrow mobile-menu-foot">Real estate + home service marketing</p></dialog>;
 }
-
-export function Navigation() {
-  const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(false);
-  const path = usePathname();
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => { setOpen(false); }, [path]);
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const apply = () => { const stored = localStorage.getItem('dp-theme'); const next = stored ? stored === 'dark' : media.matches; setDark(next); document.documentElement.dataset.theme = next ? 'dark' : 'light'; };
-    apply(); media.addEventListener('change', apply); return () => media.removeEventListener('change', apply);
-  }, []);
-  function theme() { const next = !dark; setDark(next); document.documentElement.dataset.theme = next ? 'dark' : 'light'; localStorage.setItem('dp-theme', next ? 'dark' : 'light'); }
-  const links = [['Services', '/services'], ['Who we help', '/industries'], ['Our work', '/work'], ['Info products', '/info-products']];
-  return <header className="site-header"><div className="nav-shell">
-    <Link href="/" className="wordmark" aria-label="Digital Pathway home"><span className="brand-symbol" aria-hidden="true"><ArrowUpRight weight="bold" size={29} /></span><span>digital<br />pathway<span className="brand-period">.</span></span></Link>
-    <nav aria-label="Main navigation" className="desktop-nav">{links.map(([label, href]) => <Link key={href} className={path.startsWith(href) ? 'active' : ''} href={href}>{label}</Link>)}</nav>
-    <div className="nav-actions"><button type="button" className="icon-button theme-toggle" onClick={theme} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <Sun size={21} /> : <Moon size={21} />}</button><Link className="button button-small nav-cta" href="/contact">Start a project <Arrow size={18} /></Link><button ref={toggleRef} className="icon-button menu-toggle" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation" aria-label={open ? 'Close navigation' : 'Open navigation'}>{open ? <X size={26} /> : <List size={26} />}</button></div>
-  </div><nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-nav" hidden={!open} onKeyDown={e => { if (e.key === 'Escape') { setOpen(false); toggleRef.current?.focus(); } }}>{links.map(([label, href]) => <Link key={href} href={href}>{label}<Arrow /></Link>)}<Link href="/contact">Start a project<Arrow /></Link></nav></header>;
+export function Navbar(){
+ const path=usePathname();const header=useRef<HTMLElement>(null);const dialog=useRef<HTMLDialogElement>(null);const toggle=useRef<HTMLButtonElement>(null);const [open,setOpen]=useState(false);
+ useEffect(()=>{dialog.current?.close();header.current?.querySelectorAll('details').forEach(d=>d.open=false);},[path]);
+ useEffect(()=>{
+ const update=()=>header.current?.classList.toggle('is-scrolled',window.scrollY>24);
+ update();window.addEventListener('scroll',update,{passive:true});
+ const esc=(e:KeyboardEvent)=>{if(e.key==='Escape')header.current?.querySelectorAll('details').forEach(d=>d.open=false);};
+ const outside=(e:MouseEvent)=>{if(!header.current?.contains(e.target as Node))header.current?.querySelectorAll('details').forEach(d=>d.open=false);};
+ document.addEventListener('keydown',esc);document.addEventListener('click',outside);
+ return()=>{window.removeEventListener('scroll',update);document.removeEventListener('keydown',esc);document.removeEventListener('click',outside);};
+ },[]);
+ useEffect(()=>{if(!open)return;const prior=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=prior;};},[open]);
+ return <header ref={header} className="site-header dark"><div className="nav-shell">
+ <Link href="/" className="wordmark" aria-label="Digital Pathway home">digital pathway<span aria-hidden="true">↗</span></Link>
+ <nav className="desktop-nav" aria-label="Main navigation">
+ {[{name:'Services',href:'/services',links:serviceLinks},{name:'Who We Help',href:'/industries',links:marketLinks}].map(g=><details key={g.href} className="nav-disclosure" name="desktop-menu"><summary aria-current={path.startsWith(g.href)?'true':undefined}>{g.name}<span aria-hidden="true">+</span></summary><div className="mega-menu"><Link className="mega-overview" href={g.href}>Explore {g.name}<Arrow/></Link>{g.links.map(([n,h])=><Link key={h} href={h} aria-current={path===h?'page':undefined}>{n}<Arrow size={18}/></Link>)}</div></details>)}
+ {[['Our Work','/work'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link key={h} href={h} aria-current={path===h?'page':undefined}>{n}</Link>)}
+ </nav><Link className="button button-small nav-cta" href="/contact">Start a Project<Arrow size={18}/></Link>
+ <button ref={toggle} className="menu-button mobile-toggle" aria-haspopup="dialog" aria-expanded={open} onClick={()=>{dialog.current?.showModal();setOpen(true);}}>Menu <span aria-hidden="true">☰</span></button>
+ </div><MobileMenu dialogRef={dialog} onClose={()=>{setOpen(false);toggle.current?.focus();}}/></header>;
 }
-
-export function Tracking() {
-  useEffect(() => {
-    function click(e: MouseEvent) { const el = (e.target as Element).closest('a,button'); if (!el) return; const href = el.getAttribute('href') || ''; let event = ''; if (href === '/contact') event = 'project_cta_click'; else if (href.startsWith('mailto:')) event = 'email_click'; else if (el.hasAttribute('data-project')) event = 'portfolio_click'; if (event) { const w = window as Window & { dataLayer?: unknown[] }; w.dataLayer = w.dataLayer || []; w.dataLayer.push({event, page_path: location.pathname, cta_label: el.textContent?.trim(), destination: href}); } }
-    document.addEventListener('click', click); return () => document.removeEventListener('click', click);
-  }, []); return null;
+export const Navigation=Navbar;
+export function Tracking(){
+ const path=usePathname();
+ useEffect(()=>{
+ const click=(e:MouseEvent)=>{const el=(e.target as Element).closest('a');if(!el)return;const href=el.getAttribute('href')||'';let event:EventName|undefined;
+ if(href.startsWith('/contact'))event='start_project_click';
+ else if(href.startsWith('/services/'))event='service_click';
+ else if(el.hasAttribute('data-project'))event='portfolio_click';
+ else if(href.startsWith('mailto:'))event='email_click';
+ else if(href.startsWith('tel:'))event='phone_click';
+ if(event)track(event,{destination:href,cta_label:el.textContent?.trim().slice(0,120)||''});
+ };
+ document.addEventListener('click',click);return()=>document.removeEventListener('click',click);
+ },[]);
+ useEffect(()=>{if(path.startsWith('/work/'))track('case_study_view',{project:path.split('/').pop()||''});},[path]);
+ return null;
 }
-
-export function InquiryForm({ email }: { email: string }) {
-  const [draft, setDraft] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [copyError, setCopyError] = useState('');
-  const [subject, setSubject] = useState('Digital Pathway project inquiry');
-  const resultRef = useRef<HTMLDivElement>(null);
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
-  return <form className="inquiry-form" onSubmit={e => { e.preventDefault(); const data = new FormData(e.currentTarget); const selected = data.getAll('services').join(', ') || 'Help choosing the right starting point'; const title = `Project inquiry: ${String(data.get('business')).slice(0,120)}`; const body = `Hi Digital Pathway,\n\nI'd like to discuss a project.\n\nName: ${data.get('name')}\nEmail: ${data.get('email')}\nBusiness: ${data.get('business')}\nWebsite: ${data.get('website') || 'Not supplied'}\nIndustry: ${data.get('industry')}\nInterested in: ${selected}\n\nGoals:\n${data.get('goals')}\n`; setSubject(title); setDraft(body); requestAnimationFrame(() => resultRef.current?.focus()); const w=window as Window & {dataLayer?: unknown[]}; w.dataLayer=w.dataLayer||[]; w.dataLayer.push({event:'inquiry_draft_created', page_path:location.pathname}); }}>
-    <div className="form-grid"><label>Your name<input name="name" autoComplete="name" required maxLength={100} placeholder="Full name" /></label><label>Email address<input name="email" type="email" autoComplete="email" required maxLength={180} placeholder="you@company.com" /></label><label>Business name<input name="business" autoComplete="organization" required maxLength={120} placeholder="Your business" /></label><label>Website <span>(optional)</span><input name="website" inputMode="url" maxLength={250} placeholder="yourwebsite.com" /></label></div>
-    <label>Which best describes your business?<select name="industry" required defaultValue=""><option value="" disabled>Select an industry</option><option>Real estate</option><option>Home services</option><option>Info products / education</option><option>Other</option></select></label>
-    <fieldset><legend>What can we help with?</legend><div className="service-choices">{['Web design','SEO','Meta Ads','Google Ads','Info product marketing'].map(name => <label key={name}><input type="checkbox" name="services" value={name} /><span>{name}</span></label>)}</div></fieldset>
-    <label>What would you like to achieve?<textarea name="goals" required minLength={10} maxLength={3000} rows={4} placeholder="Tell us about your business, your goals, and what you want to improve." /></label>
-    <p className="form-note">Your details stay in this browser until you send your inquiry from your email app.</p>
-    <button className="button" type="submit">Prepare my inquiry<Arrow /></button>
-    {draft && <div className="draft-result" tabIndex={-1} ref={resultRef} role="status"><h3>Your inquiry is ready.</h3><p>Open the draft in your email app, then send it to {email}. Nothing has been sent yet.</p><div className="draft-actions"><a className="button" href={`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(draft)}`}><EnvelopeSimple size={20} /> Open email draft</a><button className="button button-outline" type="button" onClick={async () => { try { await navigator.clipboard.writeText(draft); setCopied(true); setCopyError(''); copyTimer.current=setTimeout(()=>setCopied(false),3000); } catch {setCopyError('Copy was unavailable. You can select the text below.');} }}>{copied ? <Check size={20} /> : <Copy size={20} />}{copied ? 'Copied' : 'Copy inquiry'}</button></div>{copyError && <p>{copyError}</p>}<details><summary>View inquiry text</summary><pre>{draft}</pre></details></div>}
-  </form>;
+const journey=[
+ {label:'Discover',channel:'Search / Ads',title:'Be there when the interest starts.',copy:'Relevant searches and thoughtful advertising introduce your business to people with a reason to pay attention.',href:'/services/seo',link:'Build your visibility'},
+ {label:'Evaluate',channel:'Website / Positioning',title:'Make the value easy to understand.',copy:'A clear message and a focused website help visitors understand what you do, who it is for, and why it matters.',href:'/services/web-design',link:'Strengthen your website'},
+ {label:'Trust',channel:'Proof / Content',title:'Give the decision something to stand on.',copy:'Actual work and useful content help prospects evaluate the quality behind your business before the first conversation.',href:'/work',link:'See the work'},
+ {label:'Act',channel:'Call / Form / Booking',title:'Make the next step feel obvious.',copy:'Connect the page, the offer, and the inquiry path. Measure the actions that bring your business closer to the right customers.',href:'/contact',link:'Find your starting point'}
+];
+export function CustomerJourney(){
+ const [active,setActive]=useState(0);const tabs=useRef<(HTMLButtonElement|null)[]>([]);
+ return <div className="journey"><div className="journey-tabs" role="tablist" aria-label="Customer decision stages">{journey.map((s,i)=><button key={s.label} ref={el=>{tabs.current[i]=el;}} id={'journey-tab-'+i} role="tab" aria-selected={active===i} aria-controls={'journey-panel-'+i} tabIndex={active===i?0:-1} onClick={()=>setActive(i)} onKeyDown={e=>{let n=active;if(e.key==='ArrowRight')n=(active+1)%4;else if(e.key==='ArrowLeft')n=(active+3)%4;else if(e.key==='Home')n=0;else if(e.key==='End')n=3;else return;e.preventDefault();setActive(n);tabs.current[n]?.focus();}}><span className="eyebrow">0{i+1}</span><strong>{s.label}</strong><span>{s.channel}</span></button>)}</div>
+ {journey.map((s,i)=><div key={s.label} id={'journey-panel-'+i} role="tabpanel" aria-labelledby={'journey-tab-'+i} tabIndex={0} hidden={active!==i} className="journey-panel"><span className="journey-number" aria-hidden="true">0{i+1}</span><div><h3>{s.title}</h3><p>{s.copy}</p><Link className="text-link" href={s.href}>{s.link}<Arrow/></Link></div></div>)}</div>;
 }

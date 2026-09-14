@@ -1,5 +1,7 @@
-import type { Metadata } from 'next';
-import { InquiryForm, Arrow } from '@/components/interactive';
-import { contactEmail } from '@/lib/site';
-export const metadata:Metadata={title:'Start a Project',description:'Tell Digital Pathway about your business and your marketing goals.',alternates:{canonical:'/contact'}};
-export default function Contact(){return <section className="contact-page container"><div className="contact-intro"><p className="eyebrow">Start a project</p><h1 className="display">What’s<br />your next<br /><span className="highlight">move?</span></h1><p>A better website. More relevant inquiries. A new offer. Tell us what you have in mind.</p><a className="text-link" href={`mailto:${contactEmail}`}>{contactEmail}<Arrow/></a><div className="contact-expect"><h2>Let’s start with the essentials.</h2><p>Your business, your goals, and where things stand today. We’ll use that context to start a useful conversation.</p></div></div><InquiryForm email={contactEmail}/></section>;}
+import {ProjectForm} from '@/components/project-form';
+import {Breadcrumb} from '@/components/shared';
+import {Arrow} from '@/components/interactive';
+import {pageMetadata,contactEmail} from '@/lib/site';
+export const dynamic='force-dynamic';
+export const metadata=pageMetadata('Start a Project','Tell Digital Pathway about your business, marketing goals, and the work you want to improve.','/contact');
+export default function Contact(){const available=Boolean(process.env.PROJECT_WEBHOOK_URL||(process.env.RESEND_API_KEY&&process.env.INQUIRY_FROM_EMAIL));return <><section className="contact-header dark"><div className="container"><Breadcrumb items={[{name:'Start a Project',href:'/contact'}]}/><p className="eyebrow">Start a project</p><h1>LET’S FIND<br/>YOUR NEXT MOVE.</h1></div></section><section className="section container contact-grid"><div className="contact-intro"><p className="eyebrow">A useful first conversation</p><h2>WHERE YOU ARE.<br/>WHERE YOU<br/>WANT TO GO.</h2><p>A better website. More relevant inquiries. An education offer. Tell us what you have in mind.</p><a className="text-link" href={'mailto:'+contactEmail}>{contactEmail}<Arrow size={18}/></a><div className="contact-expect"><h3>What happens next?</h3><p>We review your business, goals, and current marketing to discuss the right starting point and scope.</p></div></div><ProjectForm email={contactEmail} available={available}/></section></>;}

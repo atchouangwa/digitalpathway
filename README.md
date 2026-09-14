@@ -1,52 +1,41 @@
 # Digital Pathway
 
-Production-ready marketing website for Digital Pathway, focused on real estate and home service businesses. Built with Next.js App Router, React, TypeScript, Motion, and locally served fonts.
+Monochrome agency website in the existing Next.js App Router / TypeScript project. Original URLs, service scope, portfolio relationships, and public contact inbox are preserved.
 
-## Development
+## Run
+Node 24. Use npm ci, npm run dev, npm run build, npm run typecheck, and npm test. Tailwind uses its PostCSS plugin. The design is a bespoke CSS component system with Tailwind utilities available. Geist is optimized and self-hosted by next/font at build time. No animation runtime is shipped.
 
-```sh
-npm ci
-npm run dev
-```
+## Pages and components
+All original URLs remain: /, /services, /services/web-design, /services/seo, /services/google-ads, /services/meta-ads, /industries, /industries/real-estate, /industries/home-services, /info-products, /work, /about, /contact.
+New detail pages: /work/dana-williams, /work/henry-clay-co, /work/onu-ventures. Project data supports services, problem, strategy, execution, results, gallery, and testimonial. Optional unverified fields are absent and hidden.
+Data: lib/content.ts. Shared server components: components/shared.tsx. Interactive navigation and journey: components/interactive.tsx. Intake: components/project-form.tsx. Metadata and inbox: lib/site.ts. Sitemap, robots, OG image, Organization, Service, and Breadcrumb JSON-LD are included.
 
-Production checks: `npm run build` and `npm run typecheck`. Serve the production build with `npm start`.
+## Project intake
+The old email-draft generator is replaced with a four-step form and POST /api/inquiries.
+Configure ONE adapter in Vercel:
+- Resend: RESEND_API_KEY and INQUIRY_FROM_EMAIL (verified sender). Optional INQUIRY_TO_EMAIL defaults to the existing public inbox.
+- HTTPS webhook: PROJECT_WEBHOOK_URL, optional PROJECT_WEBHOOK_TOKEN. A webhook takes precedence. Supports an approved Zapier, Make, GoHighLevel, HubSpot integration bridge, or custom API.
 
-## Pages
+Webhook JSON: event, requestId, submittedAt, source, name, email, company, website, businessType, services, goal, timeline, consent. Acknowledge only after accepting the inquiry. Use requestId for durable deduplication. Do not redirect. Optional token uses Bearer authorization.
 
-Home, Services, four service detail pages (Web Design, SEO, Meta Ads, Google Ads), Industries, two industry detail pages (Real Estate, Home Services), Work, Info Products, About, and Contact. Includes a custom 404, sitemap, robots.txt, page metadata, and favicon.
+Success is shown only after provider acceptance, not a claim of inbox delivery. With no configuration, the page clearly discloses online inquiries are unavailable and provides the existing email. It never silently discards leads. Redeploy after configuration.
 
-## Deploy on Vercel
-
-Import `atchouangwa/digitalpathway` and select the Next.js framework. Build: `npm run build`. Install: `npm ci`. Use the repository root. Vercel's Git integration can automatically deploy future pushes to main.
-
-Optional environment variables:
-
-- `NEXT_PUBLIC_SITE_URL`: approved primary domain. Without it, the Vercel production URL is used for canonical links and the sitemap.
-- `NEXT_PUBLIC_CONTACT_EMAIL`: business inbox. Default: `francis@digitalpathway.io`, published on Digital Pathway's public company page.
-
-## Inquiry flow
-
-The contact form validates inputs, prepares an inquiry in the visitor's browser, and provides a `mailto:` draft plus copy fallback. It does **not** submit to a backend or claim that an email was delivered. No contact data is stored by the site. The visitor must send the prepared draft from their email app. A CRM/webhook or email API can replace this flow when an approved destination and credentials are configured.
+Client/server validation, origin checks, payload limits, honeypot, timeouts, and a bounded per-instance rate limiter are included. The limiter is best effort in serverless deployments, not distributed abuse defense. Add durable limiting or Vercel WAF if needed. No personal payloads or credentials are logged. No PII is persisted in browser storage.
 
 ## Tracking
+Data layer events: start_project_click, service_click, portfolio_click, form_start, form_step_complete, form_submit, email_click, phone_click, case_study_view.
+No personal form values are sent to analytics. form_submit fires only on API acceptance. Phone tracking is prepared for a future verified phone link; no number is invented.
+An approved GTM container can consume these events for GA4, Google Ads, and Meta Pixel. No vendor IDs, pixels, or consent assertions are fabricated.
 
-The site emits `project_cta_click`, `portfolio_click`, `email_click`, and `inquiry_draft_created` to `window.dataLayer`. No visitor form values are included. No analytics vendors or tracking IDs are fabricated or preinstalled. Connect an approved tag manager and consent policy before loading advertising pixels.
+## Verification
+GitHub Actions builds the app and runs Playwright across 1440, 1024, 768, 390, and 375px for every route. Screenshots/traces are retained as artifacts. Checks cover links, image loading, overflow, metadata, mobile focus, keyboard controls, reduced motion, validation, and honest missing-provider behavior. External delivery requires an authorized provider and real delivery verification.
 
-## Content and asset provenance
-
-- Brand, target markets, and services: supplied by the project owner.
-- Portfolio relationship: owner supplied https://myrealtordanawilliams.com/, https://www.henryclayco.com/, https://www.onuventuresinc.com/ as completed work. Screenshots show those actual live websites. No unverified performance metrics or scope claims are added.
-- Business inbox: https://digitalpathway.io/company, reviewed September 12, 2026. No public statistics, client counts, or founder claims were imported.
-- Visual inspiration: https://www.orbgroup.com/en/. Original Digital Pathway layout and copy; no Orb case studies, logos, or results reused.
-- `architecture.webp` and `interior.webp`: original AI-generated conceptual architectural imagery. They are industry illustrations, not photographs of client projects. Portfolio screenshots are separate.
-- Fonts: Barlow Condensed and Manrope via Fontsource, self-hosted. Icons: Phosphor.
-
-## Design decisions
-
-Condensed typography, asymmetric photography, a lime accent, and simple editorial grids. Design variance 8, motion 5, density 3. Light/dark theme tokens, reduced-motion support, keyboard navigation, semantic disclosure widgets, and touch-sized controls.
-
-The supplied Emil Kowalski, Taste Skill, Motion/Framer, and UI UX Pro Max guidance informed typography, layout, animation timing, responsiveness, and accessibility. Orb's specific direction takes priority over generic database palette recommendations.
-
-## Known operational details
-
-No custom domain, external analytics ID, CRM, paid integration, or email API is provisioned by the source code. Do not add fabricated reviews, pricing, guarantees, or case-study results. Image previews are WebP assets stored in this repository; there are no external image dependencies at runtime.
+## Provenance
+- Business, services, portfolio relationship: project owner.
+- Original facts/contact: preserved from commit 8231ce7c926e27a93368ebcf4527f8eed511a6c9.
+- Inbox: francis@digitalpathway.io, originally verified at https://digitalpathway.io/company.
+- Authentic screenshots: https://myrealtordanawilliams.com/, https://www.henryclayco.com/, https://www.onuventuresinc.com/.
+- architecture.webp and interior.webp are existing AI-generated concept illustrations, not client projects. Alt text labels them conceptual.
+- Default presentation is grayscale. Portfolio hover can restore original color.
+- No invented results, testimonials, clients, credentials, pricing, guarantees, personnel, or offices.
+- Orb Group provided editorial inspiration. Digital Pathway layout and copy are original.
