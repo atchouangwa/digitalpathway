@@ -1,0 +1,42 @@
+# Digital Pathway
+
+> Digital Pathway is a marketing agency focused on real estate and home service businesses. The agency connects conversion-focused websites, SEO and AI search visibility, Google Ads, Meta Ads, and conversion measurement.
+
+## Core services
+
+- /services/web-design — Conversion-focused web design and development
+- /services/seo — SEO, local search strategy, content structure, and AI search visibility
+- /services/google-ads — High-intent paid search campaigns and landing-page alignment
+- /services/meta-ads — Paid social strategy, creative, retargeting, and conversion paths
+
+## Industries
+
+- /industries/real-estate — Marketing for agents, teams, brokerages, developers, and property businesses
+- /industries/home-services — Marketing for contractors and home service businesses
+
+## Portfolio
+
+- /work — Digital Pathway project portfolio
+- /work/dana-williams — Dana Williams real estate website project
+- /work/henry-clay-co — Henry Clay Co. property staging website project
+- /work/onu-ventures — Onu Ventures real estate development website project
+
+## Insights
+
+- /insights — Marketing insights hub
+- /insights/home-service-marketing-system — Home service marketing system
+- /insights/real-estate-marketing-system — Real estate marketing system
+- /insights/seo-vs-google-ads-local-business — SEO vs Google Ads for local businesses
+- /insights/answer-engine-optimization-local-business — AEO for local businesses
+
+## Business information
+
+- /about — About Digital Pathway
+- /contact — Project inquiry page
+- Contact email: francis@digitalpathway.io
+
+## Content standard
+
+Digital Pathway does not publish fabricated reviews, performance statistics, awards, credentials, locations, or guarantees. Search rankings, lead volume, revenue outcomes, and AI citations are not guaranteed.
+
+This file is provided as optional machine-readable documentation. It is not presented as a Google ranking factor and does not replace normal crawling, indexing, structured data, or useful HTML content.
