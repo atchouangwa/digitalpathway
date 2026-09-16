@@ -14,7 +14,7 @@ export function MobileMenu({dialogRef,onClose}:{dialogRef:React.RefObject<HTMLDi
  <nav aria-label="Mobile navigation" onClick={e=>{if((e.target as Element).closest('a'))dialogRef.current?.close();}}>
  <div className="mobile-group"><Link href="/services">Services <Arrow/></Link><div>{serviceLinks.map(([n,h])=><Link key={h} href={h}>{n}</Link>)}</div></div>
  <div className="mobile-group"><Link href="/industries">Who We Help <Arrow/></Link><div>{marketLinks.map(([n,h])=><Link key={h} href={h}>{n}</Link>)}</div></div>
- {[['Our Work','/work'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link className="mobile-main-link" key={h} href={h}>{n}<Arrow/></Link>)}
+ {[['Our Work','/work'],['Insights','/insights'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link className="mobile-main-link" key={h} href={h}>{n}<Arrow/></Link>)}
  <Link className="button" href="/contact">Start a Project<Arrow/></Link>
  </nav><p className="eyebrow mobile-menu-foot">Real estate + home service marketing</p></dialog>;
 }
@@ -34,7 +34,7 @@ export function Navbar(){
  <Link href="/" className="wordmark" aria-label="Digital Pathway home">digital pathway<span aria-hidden="true">↗</span></Link>
  <nav className="desktop-nav" aria-label="Main navigation">
  {[{name:'Services',href:'/services',links:serviceLinks},{name:'Who We Help',href:'/industries',links:marketLinks}].map(g=><details key={g.href} className="nav-disclosure" name="desktop-menu"><summary aria-current={path.startsWith(g.href)?'true':undefined}>{g.name}<span aria-hidden="true">+</span></summary><div className="mega-menu"><Link className="mega-overview" href={g.href}>Explore {g.name}<Arrow/></Link>{g.links.map(([n,h])=><Link key={h} href={h} aria-current={path===h?'page':undefined}>{n}<Arrow size={18}/></Link>)}</div></details>)}
- {[['Our Work','/work'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link key={h} href={h} aria-current={path===h?'page':undefined}>{n}</Link>)}
+ {[['Our Work','/work'],['Insights','/insights'],['Info Products','/info-products'],['About','/about']].map(([n,h])=><Link key={h} href={h} aria-current={path===h||path.startsWith(h+'/')?'page':undefined}>{n}</Link>)}
  </nav><Link className="button button-small nav-cta" href="/contact">Start a Project<Arrow size={18}/></Link>
  <button ref={toggle} className="menu-button mobile-toggle" aria-haspopup="dialog" aria-expanded={open} onClick={()=>{dialog.current?.showModal();setOpen(true);}}>Menu <span aria-hidden="true">☰</span></button>
  </div><MobileMenu dialogRef={dialog} onClose={()=>{setOpen(false);toggle.current?.focus();}}/></header>;
