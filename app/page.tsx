@@ -23,8 +23,15 @@ const aiVisibilityPrinciples=[
  ['Evidence over filler','Authentic work, specific explanations, and current information create stronger trust signals than generic volume content.']
 ];
 
+const signalRail=[
+ ['01','Strategy','Offer + market'],
+ ['02','Experience','Web + landing pages'],
+ ['03','Acquisition','Search + paid media'],
+ ['04','Measurement','Calls + inquiries']
+];
+
 export default function Home(){return <>
- <section className="home-hero dark"><div className="container"><div className="hero-topline"><p className="eyebrow">Digital marketing for real estate + home services</p><span className="eyebrow hero-coordinate">Strategy → Experience → Acquisition</span></div><div className="hero-title-row"><h1><span>GET FOUND.</span><span>GET TRUSTED.</span><span>GET CHOSEN.</span></h1><div className="hero-path" aria-hidden="true"><span>01</span><i/><span>02</span><i/><span>03<Arrow size={30}/></span></div></div><div className="hero-bottom"><p>Conversion-focused web design, SEO, Google Ads, and Meta Ads for real estate and home service businesses. One connected path from search or scroll to qualified inquiry.</p><div className="hero-actions"><PrimaryButton/><PrimaryButton href="/work" secondary>View Our Work</PrimaryButton></div></div><div className="hero-foot"><p>Web Design <span>/</span> SEO <span>/</span> Google Ads <span>/</span> Meta Ads</p><a href="#selected-work">Scroll to explore <span aria-hidden="true">↓</span></a></div></div></section>
+ <section className="home-hero dark"><div className="container"><div className="hero-topline"><p className="eyebrow">Digital marketing for real estate + home services</p><span className="eyebrow hero-coordinate">Strategy → Experience → Acquisition</span></div><div className="hero-title-row"><h1><span>GET FOUND.</span><span>GET TRUSTED.</span><span>GET CHOSEN.</span></h1><div className="hero-path" aria-hidden="true"><span>01</span><i/><span>02</span><i/><span>03<Arrow size={30}/></span></div></div><div className="hero-bottom"><p>Conversion-focused web design, SEO, Google Ads, and Meta Ads for real estate and home service businesses. One connected path from search or scroll to qualified inquiry.</p><div className="hero-actions"><PrimaryButton/><PrimaryButton href="/work" secondary>View Our Work</PrimaryButton></div></div><div className="hero-signal-rail" aria-label="Digital Pathway growth system">{signalRail.map(([n,title,detail])=><div key={title}><span>{n}</span><strong>{title}</strong><small>{detail}</small></div>)}</div><div className="hero-foot"><p>Web Design <span>/</span> SEO <span>/</span> Google Ads <span>/</span> Meta Ads</p><a href="#selected-work">Scroll to explore <span aria-hidden="true">↓</span></a></div></div></section>
 
  <section id="selected-work" className="section container"><SectionHeader label="Selected work / 01" title={'WORK THAT MAKES\nTHE FIRST IMPRESSION COUNT.'}/><ProjectCard project={projects[0]} featured details/><div className="proof-index">{projects.slice(1).map((p,i)=><Link href={'/work/'+p.slug} key={p.slug} data-project={p.slug}><span className="eyebrow">0{i+2} / {p.category}</span><strong>{p.name}</strong><Arrow/></Link>)}</div></section>
 
