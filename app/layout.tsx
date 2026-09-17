@@ -4,6 +4,7 @@ import {Navbar,Tracking} from '@/components/interactive';
 import {Footer,JsonLd} from '@/components/shared';
 import {siteUrl,contactEmail} from '@/lib/site';
 import './globals.css';
+import './elite.css';
 
 const geist=Geist({subsets:['latin'],variable:'--font-geist',display:'swap'});
 
