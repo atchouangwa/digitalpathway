@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-const routes=['/','/services','/services/web-design','/services/seo','/services/google-ads','/services/meta-ads','/industries','/industries/real-estate','/industries/home-services','/info-products','/work','/work/dana-williams','/work/henry-clay-co','/work/onu-ventures','/about','/contact'];
+const routes=['/','/services','/services/web-design','/services/seo','/services/google-ads','/services/meta-ads','/industries','/industries/real-estate','/industries/home-services','/info-products','/answers','/work','/work/dana-williams','/work/henry-clay-co','/work/onu-ventures','/about','/contact'];
 for(const width of [1440,1024,768,390,375]){
  test('every route at '+width+'px',async({page},testInfo)=>{
  test.setTimeout(240000);await page.setViewportSize({width,height:900});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -21,8 +21,9 @@ test('all internal navigation destinations resolve',async({page,request})=>{
  test.setTimeout(120000);const urls=new Set<string>();
  for(const route of routes){await page.goto(route);for(const href of await page.locator('a[href^="/"]').evaluateAll(els=>els.map(el=>el.getAttribute('href')!)))urls.add(href);}
  for(const url of urls){const r=await request.get(url);expect(r.status(),url).toBe(200);}
- expect((await request.get('/sitemap.xml')).status()).toBe(200);
- expect((await request.get('/robots.txt')).status()).toBe(200);
+ const sitemap=await request.get('/sitemap.xml');expect(sitemap.status()).toBe(200);expect(await sitemap.text()).toContain('/answers');
+ const robots=await request.get('/robots.txt');expect(robots.status()).toBe(200);const robotsText=await robots.text();expect(robotsText).toContain('OAI-SearchBot');expect(robotsText).toContain('/sitemap.xml');
+ const llms=await request.get('/llms.txt');expect(llms.status()).toBe(200);expect(await llms.text()).toContain('## Core services');
  expect((await request.get('/not-a-real-page')).status()).toBe(404);
 });
 test('mobile menu traps focus and closes on escape and navigation',async({page})=>{
