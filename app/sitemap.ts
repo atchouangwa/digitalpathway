@@ -16,9 +16,9 @@ export default function sitemap():MetadataRoute.Sitemap{
   ...industries.map(i=>'/industries/'+i.slug),
   ...projects.map(p=>'/work/'+p.slug)
  ];
- return paths.map(path=>({
+ return paths.map((path):MetadataRoute.Sitemap[number]=>({
   url:siteUrl+path,
-  changeFrequency:(path===''||path==='/answers'?'weekly':'monthly') as const,
+  changeFrequency:path===''||path==='/answers'?'weekly':'monthly',
   priority:path===''?1:path==='/services'||path==='/industries'?0.9:path==='/answers'?0.8:0.7
  }));
 }
